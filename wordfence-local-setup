@@ -1,16 +1,12 @@
 #!/bin/bash
 
-SITE=ccc-data
-ENV=dev
+# Script sets up symlinks and checks configuration for WordFence existing in a Pantheon git repo.
 
 SUCCESS=✅
 ERROR=❌
 NOTE=ℹ️
 
-TMP_PATH=/tmp
-
-#touch $TMP_PATH/wordfence-waf.php $TMP_PATH/.user.ini
-
+# @TODO 
 #rm -rf wp-content/wflogs
 
 LINK_WFLOGS_PATH="./wp-content/wflogs"
