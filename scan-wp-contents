@@ -8,22 +8,36 @@
 WP_CONTENT_PATH=./wp-content
 
 PROBLEM_PLUGINS=(
+    "accelerated-mobile-pages"
+    "adthrive-ads"
     "all-in-one-wp-migration"          # verify slug @TODO
     "autoptimize"
+    "batcache"
+    "better-search-replace"
     "better-wp-security"
+    "bookly"
+    "broken-link-checker"
+    "coming-soon"
+    "constant-contact-forms"
+    "contact-form-7"
     "cookie-law-info"
+    "disable-rest-api-and-require-jwt-oauth-authentication"
     "divi"
+    "elementor"
+    "event-espresso"                    # verify slug @TODO
     "fast-velocity-minify"
     "facet-wp"                          # verify slug @TODO
+    "h5p"
+    "hm-require-login"
+    "hummingbird-performance"
     "hyperdb"
     "infinitewp"                        # verify slug @TODO
     "instagram-feed-instashow"          # verify slug @TODO
+    "instagram-instashow"               # verify slug @TODO
     "jetpack"
-    "elementor"
-    "hm-require-login"
-    "hummingbird-performance"
     "live-weather-station"
     "lj-maintenance-mode"
+    "monarch"
     "nextgen-gallery"
     "object-sync-for-salesforce"
     "official-facebook-pixel"
@@ -36,7 +50,7 @@ PROBLEM_PLUGINS=(
     "redirection"
     "sendgrid-email-delivery-simplified"
     "site24x7-rum"
-    "slider=revolution"                 # verify slug @TODO
+    "slider-revolution"                 # verify slug @TODO
     "smartcrawl-wordpress-seo"          # verify slug @TODO
     "smush"                             # verify slug @TODO
     "timthumb"
@@ -47,26 +61,32 @@ PROBLEM_PLUGINS=(
     "unyson"
     "updraftplus"
     "visual-composer"                   # verify slug @TODO
+    "visualcomposer"                    # verify slug @TODO
+    "w3-total-cache"
     "webp-express"
     "woocommerce"
     "woocommerce-amazon-affiliates"     # verify slug @TODO
     "wordpress-download-manager"        # verify slug @TODO
     "wordpress-seo"
     "wordpress-seo-indexables"          # verify slug @TODO
+    "indexables"                        # verify slug @TODO (duplicate of above)
     "wordpress-social-login"
     "wordfence"
     "worker"
     "wp-bakery"                         # verify slug @TODO
+    "wpbakery"                          # verify slug @TODO (duplicate of above)
     "wp-ban"
     "wp-fastest-cache"
     "wp-force-login"
     "wp-migrate-db"
     "wp-newrelic"
     "wp-phpmyadmin"                     # verify slug @TODO
+    "wp-supercache"
     "wp-reset"
     "wp-rocket"
     "wpallimport"
     "wpallexport"
+    "wpdownloadmanager"
     "wpfront-notification-bar"
     "wpml"                              # verify slug @TODO
     "yith-woocommerce-request-a-quote"  # verify slug @TODO
@@ -82,16 +102,23 @@ PROBLEM_THEMES=(
     "uncode"
 )
 
+SUCCESS=✅
+ERROR=❌
+NOTE=ℹ️
+
 # PLUGINS
 INSTALLED_PLUGINS=()
 FOUND_PLUGINS=()
+PLUGINS_PATH=$WP_CONTENT_PATH/plugins
+
+echo "Scanning $PLUGINS_PATH ..."
 
 # scan for list of all plugins
-for dir in $WP_CONTENT_PATH/plugins/*/            # list directories in the form "/tmp/dirname/"
+for dir in $PLUGINS_PATH/*/                         # list directories in the form "/tmp/dirname/"
 do
-    dir=${dir%*/}                                 # remove the trailing "/"
-    dir=${dir##*/}                                # everything after last slash
-    dir=`echo $dir | tr '[:upper:]' '[:lower:]'`  # convert to lowercase
+    dir=${dir%*/}                                   # remove the trailing "/"
+    dir=${dir##*/}                                  # everything after last slash
+    dir=`echo $dir | tr '[:upper:]' '[:lower:]'`    # convert to lowercase
     INSTALLED_PLUGINS+=( "${dir}" )
 done
 
@@ -108,26 +135,31 @@ done
 # Return scan results
 if [ ${#FOUND_PLUGINS[@]} -gt 0 ]
 then
-    echo "Found the following problematic PLUGINS:"
+    echo "$ERROR  Found the following problematic PLUGINS:"
     for plugin in "${FOUND_PLUGINS[@]}"
     do
         echo "- $plugin"
     done
     echo "Apply fixes from URL: https://docs.pantheon.io/plugins-known-issues"
 else
-    echo "No problematic PLUGINS found."
+    echo "$SUCCESS  No problematic PLUGINS found."
 fi
+
+echo "-----"
 
 # THEMES
 INSTALLED_THEMES=()
 FOUND_THEMES=()
+THEMES_PATH=$WP_CONTENT_PATH/themes
+
+echo "Scanning $PLUGINS_PATH ..."
 
 # scan for list of all plugins
-for dir in $WP_CONTENT_PATH/themes/*/            # list directories in the form "/tmp/dirname/"
+for dir in $THEMES_PATH/*/                          # list directories in the form "/tmp/dirname/"
 do
-    dir=${dir%*/}                                 # remove the trailing "/"
-    dir=${dir##*/}                                # everything after last slash
-    dir=`echo $dir | tr '[:upper:]' '[:lower:]'`  # convert to lowercase
+    dir=${dir%*/}                                   # remove the trailing "/"
+    dir=${dir##*/}                                  # everything after last slash
+    dir=`echo $dir | tr '[:upper:]' '[:lower:]'`    # convert to lowercase
     INSTALLED_THEMES+=( "${dir}" )
 done
 
@@ -144,12 +176,12 @@ done
 # Return scan results
 if [ ${#FOUND_THEMES[@]} -gt 0 ]
 then
-    echo "Found the following problmatic THEMES:"
+    echo "$ERROR  Found the following problmatic THEMES:"
     for theme in "${FOUND_THEMES[@]}"
     do
         echo "- $theme"
     done
     echo "Apply fixes from URL: https://docs.pantheon.io/plugins-known-issues"
 else
-    echo "No problematic THEMES found."
+    echo "$SUCCESS  No problematic THEMES found."
 fi
