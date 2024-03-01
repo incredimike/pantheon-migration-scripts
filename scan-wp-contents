@@ -1,0 +1,155 @@
+#!/bin/bash
+
+# This script scans the wp-contents directory for problematic plugins and themes.
+# See the following URL: https://docs.pantheon.io/plugins-known-issues
+
+# Last updated: Feb 29, 2024
+
+WP_CONTENT_PATH=./wp-content
+
+PROBLEM_PLUGINS=(
+    "all-in-one-wp-migration"          # verify slug @TODO
+    "autoptimize"
+    "better-wp-security"
+    "cookie-law-info"
+    "divi"
+    "fast-velocity-minify"
+    "facet-wp"                          # verify slug @TODO
+    "hyperdb"
+    "infinitewp"                        # verify slug @TODO
+    "instagram-feed-instashow"          # verify slug @TODO
+    "jetpack"
+    "elementor"
+    "hm-require-login"
+    "hummingbird-performance"
+    "live-weather-station"
+    "lj-maintenance-mode"
+    "nextgen-gallery"
+    "object-sync-for-salesforce"
+    "official-facebook-pixel"
+    "one-click-demo-import"
+    "popup-builder"
+    "polylang"
+    "posts-to-posts"
+    "query-monitor"
+    "nitropack"
+    "redirection"
+    "sendgrid-email-delivery-simplified"
+    "site24x7-rum"
+    "slider=revolution"                 # verify slug @TODO
+    "smartcrawl-wordpress-seo"          # verify slug @TODO
+    "smush"                             # verify slug @TODO
+    "timthumb"
+    "tweet-old-post"
+    "tubepress"                         # verify slug @TODO
+    "unbounce"
+    "unloq"
+    "unyson"
+    "updraftplus"
+    "visual-composer"                   # verify slug @TODO
+    "webp-express"
+    "woocommerce"
+    "woocommerce-amazon-affiliates"     # verify slug @TODO
+    "wordpress-download-manager"        # verify slug @TODO
+    "wordpress-seo"
+    "wordpress-seo-indexables"          # verify slug @TODO
+    "wordpress-social-login"
+    "wordfence"
+    "worker"
+    "wp-bakery"                         # verify slug @TODO
+    "wp-ban"
+    "wp-fastest-cache"
+    "wp-force-login"
+    "wp-migrate-db"
+    "wp-newrelic"
+    "wp-phpmyadmin"                     # verify slug @TODO
+    "wp-reset"
+    "wp-rocket"
+    "wpallimport"
+    "wpallexport"
+    "wpfront-notification-bar"
+    "wpml"                              # verify slug @TODO
+    "yith-woocommerce-request-a-quote"  # verify slug @TODO
+    "yith-woocommerce-pdf-invoice"      # verify slug @TODO
+    "yith-woocommerce-gift-cards"       # verify slug @TODO
+    "yotuwp-easy-youtube-embed"
+)
+
+PROBLEM_THEMES=(
+    "divi"
+    "jupiter"
+    "nanosoft"
+    "uncode"
+)
+
+# PLUGINS
+INSTALLED_PLUGINS=()
+FOUND_PLUGINS=()
+
+# scan for list of all plugins
+for dir in $WP_CONTENT_PATH/plugins/*/            # list directories in the form "/tmp/dirname/"
+do
+    dir=${dir%*/}                                 # remove the trailing "/"
+    dir=${dir##*/}                                # everything after last slash
+    dir=`echo $dir | tr '[:upper:]' '[:lower:]'`  # convert to lowercase
+    INSTALLED_PLUGINS+=( "${dir}" )
+done
+
+# compare installed plugins against list of known assumed write plugins a
+# save any matches to the FOUND_PLUGINS array
+for installed in "${INSTALLED_PLUGINS[@]}"; do
+    for check in "${PROBLEM_PLUGINS[@]}"; do
+        if [[ $installed = $check ]]; then
+            FOUND_PLUGINS+=( "$installed" )
+        fi
+    done
+done
+
+# Return scan results
+if [ ${#FOUND_PLUGINS[@]} -gt 0 ]
+then
+    echo "Found the following problematic PLUGINS:"
+    for plugin in "${FOUND_PLUGINS[@]}"
+    do
+        echo "- $plugin"
+    done
+    echo "Apply fixes from URL: https://docs.pantheon.io/plugins-known-issues"
+else
+    echo "No problematic PLUGINS found."
+fi
+
+# THEMES
+INSTALLED_THEMES=()
+FOUND_THEMES=()
+
+# scan for list of all plugins
+for dir in $WP_CONTENT_PATH/themes/*/            # list directories in the form "/tmp/dirname/"
+do
+    dir=${dir%*/}                                 # remove the trailing "/"
+    dir=${dir##*/}                                # everything after last slash
+    dir=`echo $dir | tr '[:upper:]' '[:lower:]'`  # convert to lowercase
+    INSTALLED_THEMES+=( "${dir}" )
+done
+
+# compare installed plugins against list of known assumed write plugins a
+# save any matches to the FOUND_PLUGINS array
+for installed in "${INSTALLED_THEMES[@]}"; do
+    for check in "${PROBLEM_THEMES[@]}"; do
+        if [[ $installed = $check ]]; then
+            FOUND_THEMES+=( "$installed" )
+        fi
+    done
+done
+
+# Return scan results
+if [ ${#FOUND_THEMES[@]} -gt 0 ]
+then
+    echo "Found the following problmatic THEMES:"
+    for theme in "${FOUND_THEMES[@]}"
+    do
+        echo "- $theme"
+    done
+    echo "Apply fixes from URL: https://docs.pantheon.io/plugins-known-issues"
+else
+    echo "No problematic THEMES found."
+fi

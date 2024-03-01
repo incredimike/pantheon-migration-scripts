@@ -1,0 +1,62 @@
+#!/bin/bash
+
+SITE=ccc-data
+ENV=dev
+
+SUCCESS=✅
+ERROR=❌
+NOTE=ℹ️
+
+TMP_PATH=/tmp
+
+#touch $TMP_PATH/wordfence-waf.php $TMP_PATH/.user.ini
+
+#rm -rf wp-content/wflogs
+
+LINK_WFLOGS_PATH="./wp-content/wflogs"
+if [ ! -L $LINK_WFLOGS_PATH ] ; then
+    echo "Creating wflogs directory symlink"
+    ln -s ../../files/private/wflogs ./wp-content/wflogs
+else
+    echo "$SUCCESS  Link to wflogs already exists"
+fi
+
+LINK_WAF_PATH="./wordfence-waf.php"
+if [ ! -L $LINK_WAF_PATH ] ; then
+    ln -s ../files/private/wordfence-waf.php
+    echo "$SUCCESS Creating wordfence-waf.php symlink"
+else
+    echo "$SUCCESS  Link to wordfence-waf.php already exists"
+
+fi
+
+if [ ! -L "./.user.ini" ] ; then
+    ln -s ../files/private/.user.ini
+    echo "$SUCCESS Created ./.user.ini symlink"
+else
+    echo "$SUCCESS  Link to ./.user.ini already exists"
+
+fi
+
+isProtectedInFile=$(cat pantheon.yml | grep -c "protected_web_paths")
+if [ ! $isProtectedInFile -eq 0 ]
+then
+
+    if [ ! $(cat pantheon.yml | grep -c "/.user.init") -eq 0 ]
+    then
+
+        echo "$NOTE NOTE: The protected_web_paths property already exists within pantheon.yml. Add the following item to protected_web_paths:"
+        echo "protected_web_paths:"
+        echo "  - /.user.ini"
+    else
+        echo "$SUCCESS .user.ini already included in protected_web_paths"
+    fi
+else
+    echo "Adding .user.init to protected_web_paths in pantheon.yml"
+cat >> pantheon.yml << 'EOF'
+
+protected_web_paths:
+  - /.user.ini
+EOF
+fi
+

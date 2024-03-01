@@ -1,0 +1,40 @@
+#!/bin/bash
+
+
+# script incomplete
+
+ENV=dev
+UUID=b5021a99-b2fb-467f-b7aa-f7b482c6fe69
+TMP_PATH=/tmp
+
+SFTPUSER=$ENV.$UUID
+SFTPHOST=appserver.$ENV.$UUID.drush.in
+
+SUCCESS=✅
+ERROR=❌
+NOTE=ℹ️
+
+
+rm $TMP_PATH/wordfence-waf.php $TMP_PATH/.user.ini
+touch $TMP_PATH/wordfence-waf.php $TMP_PATH/.user.ini
+
+echo "chdir files/private" | sftp -b - $SFTPUSER@$SFTPHOST -o Port=2222 
+if [ $? -eq 0 ]
+then
+    echo "files/private exists"
+else
+    echo "create files/private"
+fi
+
+
+
+# The following is called a HERE document
+sftp -o Port=2222 $SFTPUSER@$SFTPHOST << EOF 
+  mkdir files/private
+  mkdir files/private/wflogs
+  put /tmp/wordfence-waf.php /files/private
+  put /tmp/.user.ini /files/private/
+  quit
+EOF
+
+rm $TMP_PATH/wordfence-waf.php $TMP_PATH/.user.ini
