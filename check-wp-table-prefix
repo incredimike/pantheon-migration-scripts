@@ -1,0 +1,10 @@
+#!/bin/bash
+
+TABLE_PREFIX=`grep '^\$table_prefix' wp-config.php | cut -d \' -f 2`
+
+if [ $TABLE_PREFIX == 'wp_' ]
+then
+    echo "Standard table prefix found: $TABLE_PREFIX"
+else
+    echo "Custom table prefix found: $TABLE_PREFIX"
+fi
