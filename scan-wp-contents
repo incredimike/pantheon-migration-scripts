@@ -111,6 +111,12 @@ INSTALLED_PLUGINS=()
 FOUND_PLUGINS=()
 PLUGINS_PATH=$WP_CONTENT_PATH/plugins
 
+if ! test -d $WP_CONTENT_PATH
+then
+    echo "$ERROR Cannot locate wp-content path $WP_CONTENT_PATH"
+    exit
+fi
+
 echo "Scanning $PLUGINS_PATH ..."
 
 # scan for list of all plugins
