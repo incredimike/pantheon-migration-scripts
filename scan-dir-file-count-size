@@ -1,0 +1,32 @@
+#!/bin/bash
+
+SCANDIR="${1:-.}"
+DIRMAX=10000
+FILESIZEMAX=250M
+
+echo "Scanning for directories containing more than $DIRMAX files:"
+
+# You can use -links if your filesystem is POSIX compliant (i.e. a directory has a 
+# link for each subdirectory in it, a link from its parent and a link to itself, 
+# thus a count of 2 links if it has no subdirectories).
+find $SCANDIR -type d -links 2 | while read -r dir
+do
+    COUNT=`find "$dir" -type f | wc -l`
+    if [[ $COUNT -gt $DIRMAX ]]
+    then
+        printf "%s:\t%s\n" "$dir" "$COUNT"
+    fi
+done
+
+echo "Completed file count scan"
+
+echo "Scanning for files over $FILESIZEMAX:"
+
+#find $SCANDIR -size +$FILESIZEMAX
+find $SCANDIR -size +$FILESIZEMAX | while read -r filepath
+do
+	size=`ls -s --block-size=1048576 $filepath | cut -d' ' -f1`
+	printf "%s\t%s\n" "$filepath" "$size MB"
+done
+
+echo "Completed file size scan"
