@@ -1,0 +1,22 @@
+#!/bin/bash
+
+CONFIGPATH="${1:-wp-config.php}"
+
+SUCCESS=✅
+ERROR=❌
+NOTE=ℹ️
+
+if ! test -f $CONFIGPATH
+then
+    echo "$ERROR Cannot locate file $CONFIGPATH"
+    exit
+fi
+
+TABLE_PREFIX=`grep '^\$table_prefix' $CONFIGPATH | cut -d \' -f 2`
+
+if [ $TABLE_PREFIX == 'wp_' ]
+then
+    echo "$SUCCESS Standard table prefix found: $TABLE_PREFIX"
+else
+    echo "$NOTE Custom table prefix found: $TABLE_PREFIX"
+fi
