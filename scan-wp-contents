@@ -3,9 +3,9 @@
 # This script scans the wp-contents directory for problematic plugins and themes.
 # See the following URL: https://docs.pantheon.io/plugins-known-issues
 
-# Last updated: Feb 29, 2024
+# Last updated: Mar 5, 2024
 
-WP_CONTENT_PATH=./wp-content
+WP_CONTENT_PATH="${1:-.}"
 
 PROBLEM_PLUGINS=(
     "accelerated-mobile-pages"
