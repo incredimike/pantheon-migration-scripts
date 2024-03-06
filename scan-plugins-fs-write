@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# Scan for plugins that want to write to the filesystem
+
+SCANDIR="${1:-./wp-contents/plugins}"
+
+echo "Scanning for writing plugins at $SCANDIR"
+
+grep -r --include "*.php" -E "fwrite|file_put_contents" $SCANDIR | cut -d ":" -f 1 | sort | uniq | while read line
+do
+    echo "HELLO $line";
+
+done
+
+
+# WRITEFILES=${grep -r --include "*.php" -E "fwrite|file_put_contents" $SCANDIR | cut -d ":" -f 1 | sort | uniq}
+
+# echo $WRITEFILES
+
+# while IFS= read -r line; do
+#     echo "... $line ..."
+# done < <(printf '%s' "$WRITEFILES")
