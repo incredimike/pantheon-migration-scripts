@@ -158,9 +158,9 @@ INSTALLED_THEMES=()
 FOUND_THEMES=()
 THEMES_PATH=$WP_CONTENT_PATH/themes
 
-echo "Scanning $PLUGINS_PATH ..."
+echo "Scanning $THEMES_PATH ..."
 
-# scan for list of all plugins
+# scan for list of all themes
 for dir in $THEMES_PATH/*/                          # list directories in the form "/tmp/dirname/"
 do
     dir=${dir%*/}                                   # remove the trailing "/"
@@ -169,8 +169,8 @@ do
     INSTALLED_THEMES+=( "${dir}" )
 done
 
-# compare installed plugins against list of known assumed write plugins a
-# save any matches to the FOUND_PLUGINS array
+# compare installed themes against list of known problematic themes
+# save any matches to the FOUND_THEMES array
 for installed in "${INSTALLED_THEMES[@]}"; do
     for check in "${PROBLEM_THEMES[@]}"; do
         if [[ $installed = $check ]]; then
