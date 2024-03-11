@@ -1,0 +1,40 @@
+#!/bin/bash
+
+# Look up a list of domains to check if they exist/resolve and if the domain 
+# redirects users to a new URL. Results are output as a tab-separated file.
+# The script must be passed a text file which lists the domains to check.
+#
+# This script requires dig & curl to function.
+#
+# Example usage: lookup-canonical-domains site-domains.txt
+
+
+if ! test -f $1; then
+  echo "Domain list file must be passed into this script."
+  echo "Example: lookup-canonical-domains domains.txt"
+  exit
+fi
+
+while read DOMAIN; do
+    
+    # Check if domain exists
+    DIG=`dig $DOMAIN A +short`
+    if [ -z "${DIG}" ]; then
+        echo -e "NXDOMAIN\t$DOMAIN"
+    else
+
+        LOOKUP_URL="https://$DOMAIN/"
+        LOCATION_URL=`curl -i -s -o /dev/null -D - $LOOKUP_URL | grep "Location:" | cut -d ' ' -f 2`
+        
+        if [ -n "$LOCATION_URL" ]; then
+            #REDIRECT_DOMAIN=`echo $LOCATION_URL | sed -E 's/^\s*.*:\/\///g'`
+            echo -e "REDIRECT\t$DOMAIN\t$LOCATION_URL"
+        else
+            echo -e "CANONICAL\t$DOMAIN"
+        fi
+
+        sleep 1
+    
+    fi
+
+done < $1
