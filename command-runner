@@ -1,0 +1,26 @@
+#!/bin/bash
+set +e
+
+# This script accepts a text file as an argument, running each line in the text file as a command.
+#
+# Usage: $ command-runner <command-list.txt>
+#
+# @TODO - Add option to strip --dry-run from command string
+# @TODO - Adjust sleep time as command argument
+
+CMDFILEPATH="${1}"
+
+SUCCESS=✅
+ERROR=❌
+
+if ! test -f $CMDFILEPATH
+then
+    echo "$ERROR Cannot locate file $CMDFILEPATH"
+    exit
+fi
+
+cat $1 | while read CMD; do
+    echo $CMD
+    $CMD < /dev/null
+    sleep 3
+done
