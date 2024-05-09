@@ -1,5 +1,17 @@
 #!/bin/bash
 
+# This script checks the wp-config.php file for important values.
+# Useful to check for differences from standard install values, or check for problematic settings.
+# Also useful to scan wp-config.migration.php for old settings during migrations.
+#
+# Usage: $ check-wp-config <path to wp-config.php>
+#
+# Scans available:
+# * WP $table_prefix value
+#
+# @TODO - Check for WP_DEBUG true/false
+# @TODO - Cookie & session constants.
+
 CONFIGPATH="${1:-wp-config.php}"
 
 SUCCESS=✅
