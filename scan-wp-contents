@@ -76,6 +76,7 @@ PROBLEM_PLUGINS=(
     "wp-bakery"                         # verify slug @TODO
     "wpbakery"                          # verify slug @TODO (duplicate of above)
     "wp-ban"
+    "wp-cerber"
     "wp-fastest-cache"
     "wp-force-login"
     "wp-migrate-db"
