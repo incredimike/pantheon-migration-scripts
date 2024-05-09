@@ -18,23 +18,19 @@ fi
 while read DOMAIN; do
     
     # Check if domain exists
-    DIG=`dig $DOMAIN A +short`
+    DIG=`dig $DOMAIN A +short +time=5`
     if [ -z "${DIG}" ]; then
         echo -e "NXDOMAIN\t$DOMAIN"
     else
-
         LOOKUP_URL="https://$DOMAIN/"
-        LOCATION_URL=`curl -i -s -o /dev/null -D - $LOOKUP_URL | grep "Location:" | cut -d ' ' -f 2`
-        
+        LOCATION_URL=`curl --connect-timeout 10 -i -s -o /dev/null -D - $LOOKUP_URL | grep "Location:" | cut -d ' ' -f 2`
         if [ -n "$LOCATION_URL" ]; then
             #REDIRECT_DOMAIN=`echo $LOCATION_URL | sed -E 's/^\s*.*:\/\///g'`
             echo -e "REDIRECT\t$DOMAIN\t$LOCATION_URL"
         else
             echo -e "CANONICAL\t$DOMAIN"
         fi
-
         sleep 1
-    
     fi
 
 done < $1
