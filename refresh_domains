@@ -1,0 +1,61 @@
+#!/bin/bash
+# Exit on error
+# set -e
+# v1.0-alpha
+# This script will remove and re-add all custom domains which are deletable on the LIVE environment, for either a single site or an entire organization
+PS3="Remove domains on the LIVE environment for which scenario? "
+select opt in "Single site" "Entire organization" Quit; do
+  case $opt in
+    "Single site")
+      read -p "Enter the Site UUID: " SITE_UUID
+      SITE="$(terminus site:info $SITE_UUID --field name)"
+      LIVE_DOMAINS="$(terminus domain:list $SITE.live --fields="deletable,id" --format csv)"
+      for LIVE_DOMAIN in ${LIVE_DOMAINS[@]}
+      do
+          if [[ "$LIVE_DOMAIN" =~ "true," ]]
+          then
+              DELETABLE+=("${LIVE_DOMAIN:5}")
+          fi
+      done
+      LIVE_DOMAINS=${DELETABLE[@]}
+      for LIVE_DOMAIN in $LIVE_DOMAINS;
+      do
+        terminus domain:remove $SITE.live $LIVE_DOMAIN
+        terminus domain:add $SITE.live $LIVE_DOMAIN
+        sleep 30
+      done
+      unset LIVE_DOMAINS
+      unset DELETABLE
+      ;;
+    "Entire organization")
+      read -p "Enter the Org UUID: " ORG_UUID
+      SITES="$(terminus org:site:list -n ${ORG_UUID} --format=list --field=Name)"
+      for SITE in $SITES;
+      do
+        LIVE_DOMAINS="$(terminus domain:list $SITE.live --fields="deletable,id" --format csv)"
+        for LIVE_DOMAIN in ${LIVE_DOMAINS[@]}
+        do
+            if [[ "$LIVE_DOMAIN" =~ "true," ]]
+            then
+                DELETABLE+=("${LIVE_DOMAIN:5}")
+            fi
+        done
+        LIVE_DOMAINS=${DELETABLE[@]}
+        for LIVE_DOMAIN in $LIVE_DOMAINS;
+        do
+          terminus domain:remove $SITE.live $LIVE_DOMAIN
+          terminus domain:add $SITE.live $LIVE_DOMAIN
+          sleep 30
+        done
+        unset LIVE_DOMAINS
+        unset DELETABLE
+      done
+      ;;
+    Quit)
+      break
+      ;;
+    *)
+      echo "Invalid option $REPLY"
+      ;;
+  esac
+done
