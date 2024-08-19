@@ -8,7 +8,7 @@ echo "Scanning for writing plugins at $SCANDIR"
 
 grep -r --include "*.php" -E "fwrite|file_put_contents" $SCANDIR | cut -d ":" -f 1 | sort | uniq | while read line
 do
-    echo "HELLO $line";
+    echo "FOUND: $line";
 
 done
 

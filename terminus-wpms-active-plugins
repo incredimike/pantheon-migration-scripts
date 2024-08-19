@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# Get a list of site URLs from WordPress
+# Fetch the active plugins for each site.
+#
+# If this stops working, remove the 2> /dev/null from terminus commands
+# and re-run to check for errors.
+
+#sites=$(terminus wp "$1" -- site list --field=url --skip-packages --skip-themes --skip-plugins 2> /dev/null)
+sites=$(terminus wp "$1" -- site list --field=url --skip-packages --skip-themes --skip-plugins) # debugging
+
+echo "** Fetching NETWORK-ACTIVE plugins for site"
+terminus wp "$1" -- plugin list \
+    --skip-packages --skip-themes --skip-plugins \
+    --status=active-network \
+    --fields=name,status,version \
+    2> /dev/null
+
+for url in $sites; do
+  echo "** Fetching ACTIVE plugins for: ${url}"
+  terminus wp "$1" -- plugin list --url="${url}" \
+    --skip-packages --skip-themes --skip-plugins \
+    --status=active \
+    --fields=name,status,version \
+    2> /dev/null
+done
+echo "** Done."
