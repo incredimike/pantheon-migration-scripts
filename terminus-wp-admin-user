@@ -1,0 +1,6 @@
+#!/bin/bash
+
+terminus wp $1 user create $PANTHEON_MIGRATION_WP_ADMIN_USER $PANTHEON_USER_EMAIL -- --user_pass=$PANTHEON_MIGRATION_WP_ADMIN_PASS --role=administrator
+terminus wp $1 -- super-admin add $PANTHEON_MIGRATION_WP_ADMIN_USER
+echo "Added user!"
+echo "USER: $PANTHEON_MIGRATION_WP_ADMIN_USER | PASS: $PANTHEON_MIGRATION_WP_ADMIN_PASS | EMAIL: $PANTHEON_USER_EMAIL"
