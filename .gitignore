@@ -2,3 +2,4 @@ testing
 .DS_Store
 composer.lock
 vendor
+command-list.txt
